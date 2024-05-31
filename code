@@ -37,6 +37,74 @@
 
 
 
+body{
+    margin:30px;
+    text-align: center;
+    background: #ff00cc;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #333399, #ff00cc);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #333399, #ff00cc); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    
+}
+
+#cw{
+    width:150px;
+    height:30px;
+    background-color: rgb(17, 155, 241);
+    color:aliceblue;
+    border-radius: 15px;
+    box-shadow: rgb(185, 185, 251) 3px 5px;
+}
+#cw:hover{
+    background-color: blueviolet;
+    width:200px;
+    height:35px;
+    transition: 0.2s;
+}
+
+#re{
+    width:150px;
+    height:30px;
+    background-color: rgb(17, 155, 241);
+    color:aliceblue;
+    border-radius: 15px;
+    box-shadow: rgb(12, 12, 243) 3px 5px;  
+}
+#re:hover{
+    background-color: blueviolet;
+    width:200px;
+    height:35px;
+    transition: 0.3s;
+}
+#ad{
+    width:150px;
+    height:30px;
+    background-color: rgb(243, 105, 0);
+    color:aliceblue;
+    border-radius: 15px;
+    box-shadow: rgb(204, 204, 241) 3px 5px; 
+}
+
+#b{
+    width:150px;
+    height:30px;
+    background-color: rgb(243, 105, 0);
+    color:aliceblue;
+    border-radius: 15px;
+    box-shadow: rgb(204, 204, 241) 3px 5px; 
+}
+#ad:hover{
+    background-color: blueviolet;
+    width:200px;
+    height:35px;
+    transition: 0.3s;
+}
+#b:hover{
+    background-color: blueviolet;
+    width:200px;
+    height:35px;
+    transition: 0.3s;
+}
+
 
 
 
