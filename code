@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DApp</title>
+    <link rel="stylesheet" href="Eth.css">
+    <script src="eth.js"></script>
+</head>
+<body>
+    <!-- Frontend page for users to connect their wallet -->
+<button onclick="connectWallet()" id="cw">Connect Wallet</button>
+
+<!-- Frontend page for admins to register org and add stakeholders + vesting details --><br><br>
+<input type="text" id="tokenContractAddress" placeholder="Token Contract Address"> <br><br>
+<button onclick="registerOrganization()" id="re">Register Organization</button>
+<br><br><br>
+
+<input type="text" id="stakeholderAddress" placeholder="Stakeholder Address"><br>
+<br>
+<input type="number" id="startTime" placeholder="Start Time"><br><br>
+<input type="number" id="duration" placeholder="Duration">
+<br><br>
+<button onclick="addStakeholder()" id="ad">Add Stakeholder</button>
+<br><br>
+
+<!-- Page for users to withdraw if they are whitelisted -->
+<button onclick="withdraw()" id="b">Withdraw</button>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// JavaScript using ethers.js and MetaMask
+
+let provider;
+let signer;
+//given
+let organizationRegistryContract;
+let vestingScheduleContract;
+
+// Connect Wallet function
+async function connectWallet() {
+    if (window.ethereum) {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        organizationRegistryContract = new ethers.Contract("0x5B38Da6a701c568545dCfcB03FcB875f56beddC4", [
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "organizations",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "tokenContract",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_tokenContract",
+                        "type": "address"
+                    }
+                ],
+                "name": "registerOrganization",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ], signer);
+
+        vestingScheduleContract = new ethers.Contract("0x540d7E428D5207B30EE03F2551Cbb5751D3c7569", [
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_stakeholder",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_startTime",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_duration",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "addVestingSchedule",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "vestingSchedules",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "startTime",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "duration",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ], signer);
+        console.log('Connected to MetaMask');
+    } else {
+        console.log('No Ethereum wallet found');
+    }
+}
+
+// Register Organization function
+async function registerOrganization() {
+    const tokenContractAddress = document.getElementById('tokenContractAddress').value;
+    await organizationRegistryContract.registerOrganization(tokenContractAddress);
+}
+
+// Add Stakeholder function
+async function addStakeholder() {
+    const stakeholderAddress = document.getElementById('stakeholderAddress').value;
+    const startTime = document.getElementById('startTime').value;
+    const duration = document.getElementById('duration').value;
+    await vestingScheduleContract.addVestingSchedule(stakeholderAddress, startTime, duration);
+}
+
+// Withdraw function
+async function withdraw() {
+    const canWithdraw = await vestingScheduleContract.canWithdraw();
+    if (canWithdraw) {
+        // Withdraw tokens
+    } else {
+        console.log('Not whitelisted or not vested yet');
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+// SPDX-License-Identifier: MIT
+
+pragma solidity 0.8.25;
+// Contract for registering organizations and their tokens
+
+contract OrganizationRegistry{
+    struct Organization{
+        address tokenContract;
+        address owner;
+    }
+    mapping(address => Organization) public organizations;
+    function registerOrganization(address _tokenContract) public{
+        organizations[msg.sender] =Organization(msg.sender, _tokenContract);
+
+    }
+}
+
+
+// Contract for adding stakeholders and vesting details
+
+contract VestingSchedule{
+struct VestingDetails{
+    uint startTime;
+    uint duration;
+}
+//mapping
+mapping(address => VestingDetails) public vestingSchedules;
+function addVestingSchedule(address _stakeholder, uint _startTime, uint _duration) public {
+    vestingSchedules[_stakeholder] =VestingDetails(_startTime, _duration);
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
